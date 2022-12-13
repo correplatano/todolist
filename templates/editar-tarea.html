@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Tarea</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <!-- Podemos cambiar el tipo de fuente de nuestra plantilla, vamos a usar google fonts, mediante el mismo sistema que el anterior, pero además hay que copiar el link de css y ponerlo en nuestra hoja de css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
+    <!-- Aplicamos la hoja de estilo, en este caso nuestro main.css con la instrucción de flask url_for() Sí no la pongo como último link rel no me funciona -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+        <div class="modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Editar Tarea</h2>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <form action="/editada/{{editar_tarea.id}}" method="post">
+
+                            <div class="form-group">
+                                <input class="form-control input-lg" type="text" name="nuevo_contenido" value="{{ editar_tarea.contenido }}" autofocus>
+
+                                <input class="form-control input-lg" type="text" name="nueva_categoria" value="{{ editar_tarea.categoria }}">
+
+                                <input class="form-control input-lg" type="date" name="nueva_fecha_limite" value="{{ editar_tarea.fecha }}">
+
+                            </div>
+
+                                <div class="modal-footer">
+                                    <a href="/">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

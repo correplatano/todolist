@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App de Gestión de Tareas</title>
+    <!-- Buscamos una plantilla de Bootstrap en Bootswatch y copiamos el html que nos guste-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/united/bootstrap.min.css" integrity="sha384-JW3PJkbqVWtBhuV/gsuyVVt3m/ecRJjwXC3gCXlTzZZV+zIEEl6AnryAriT7GWYm" crossorigin="anonymous">
+
+    <!-- Podemos cambiar el tipo de fuente de nuestra plantilla, vamos a usar google fonts, mediante el mismo sistema que el anterior, pero además hay que copiar el link de css y ponerlo en nuestra hoja de css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
+    <!-- Aplicamos la hoja de estilo, en este caso nuestro main.css con la instrucción de flask url_for() Sí no la pongo como último link rel no me funciona -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!-- Dividimos la página en cuatro bloques iguales de forma vertical -->
+    <main class="container p-4">
+        <!-- Escribimos nuestra cabecera de la página que ocupe todas las cajas de la página y esté centrado, en mi caso he quitado el selector titulo, pues quiero la misma letra en toda la página-->
+        <h1 class="display-4 text-center mt-4">
+            Gestor de Tareas
+        </h1>
+        <div class="row">
+            <div class="col-md-4 offset-md-4 my-auto"> <!--Este div ocupará 4 columnas del espacio (centrado)-->
+                <div class="card border-success mb-3 w-100" style="max-width: 40em;"> <!--Creacion del objeto card-->
+                    <div class="card-header">
+                        <form action="/crear-tarea" method="post">
+                            <div class="form-group"> <!-- clase de bootstrap q ayuda a ir maquetando en grupos los inputs del formulario, así no se pierde info de un formulario mayor-->
+                                <input class="form-control input-lg" type="text" name="contenido_tarea" placeholder="Escribe una Tarea" autofocus><!-- input tipo texto, placeholder: lo que queremos q muestre, name es para poder llamarlo desde otros sitios, form-control para que tenga el estilo de que si escribimos más texto del q cabe, se vaya desplazando hacia la derecha. autofocus es para q cuando entre en la web el puntero se situe directamente en este cajón -->
+                                <!--He tenido que buscar cómo cambiar el ancho del cuadro del formulario ya que no se ajustaba a la tarjeta -->
+                                <br><input class="form-control input-lg" type="text" name="categoria" placeholder="Escribe una categoría para la tarea">
+                                <br><p>Fecha límite para realizar la tarea:</p>
+                                <input class="form-control input-lg" type="date" name="fecha_limite">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Guardar
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            {% for t in lista_tareas: %}<br>
+                            <li>
+                                <span class="{% if t.hecha==true %} tarea_hecha {% endif %}"><!-- esta span class es para aplicar un estilo, en este caso el tachado de css, lo hace si se cumple nuestro código en jinja: hecha = True o 1 en la BD sirven ambas-->
+                                    {{ t.contenido, t.categoria, t.fecha }} <!--dobles llaves muestra la variable, funciona como un print-->
+                                </span><br>
+                                <a href="/tarea-hecha/{{t.id}}" style="text-decoration:none"><!--Creamos un link q engloba a la imagen, así hemos creado un boton -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="green" class="bi bi-check2-square" viewBox="0 0 16 16"><!-- cambiamos wiegth y heigth, q son pixeles. No es recomendable trabajar con pixeles porque todas las pantallas tienen resoluciones diferentes, x lo q se trabaja en unidades d medida con porcentajes. En este caso la em -->
+                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                                        <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                                    </svg>
+                                </a>
+                                <a href="/borrar-tarea/{{t.id}}" style="text-decoration:none">
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="red" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                    </svg>
+                                </a>
+                                <a href="/editar-tarea/{{t.id}}" style="text-decoration:none">
+                                    <button type="button" class="btn btn-outline-warning">Editar</button>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
